@@ -16,8 +16,12 @@ pub mod anchor_escrow {
     use super::*;
 
     pub fn make(ctx: Context<Make>, seed: u64, deposit: u64, receive: u64) -> Result<()> {
+        // First: deposit tokens to vault
         ctx.accounts.deposit(deposit)?;
-        ctx.accounts.save_escrow(seed, receive, &ctx.bumps)
+        
+        // Second: save escrow with the deposit amount parameter
+        // NOT with self.vault.amount (which may not be updated yet)
+        ctx.accounts.save_escrow(seed, deposit, receive, &ctx.bumps)
     }
 
     pub fn refund(ctx: Context<Refund>) -> Result<()> {
